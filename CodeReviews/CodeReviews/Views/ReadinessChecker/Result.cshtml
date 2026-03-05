@@ -1,0 +1,94 @@
+@model CodeReviews.Models.ReadinessResultViewModel
+
+@{
+    ViewData["Title"] = "Readiness Result";
+    var statusClass = Model.Status switch
+    {
+        "Ready" => "success",
+        "Almost Ready" => "warning",
+        _ => "danger"
+    };
+}
+
+<div class="container mt-4">
+    <h2>Your Readiness Result</h2>
+
+    <div class="alert alert-@statusClass mt-4" role="alert">
+        <h4 class="alert-heading">@Model.Status</h4>
+        <p>@Model.Message</p>
+        <hr>
+        <p class="mb-0">Score: <strong>@Model.Score / @Model.MaxScore</strong> (@String.Format("{0:P0}", (double)Model.Score / Model.MaxScore))</p>
+    </div>
+
+    @if (Model.Recommendations.Any())
+    {
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5>Recommendations</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    @foreach (var recommendation in Model.Recommendations)
+                    {
+                        <li class="list-group-item">@recommendation</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-primary">Check Again</a>
+        @if (Model.Status == "Ready")
+        {
+            <a href="#" class="btn btn-success">Request Code Review</a>
+        }
+    </div>
+
+    @if (Model.Checklist != null)
+    {
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5>Your Checklist Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Build & Run</h6>
+                        <ul class="list-unstyled">
+                            <li>@(Model.Checklist.ProjectBuilds ? "?" : "?") Project builds</li>
+                            <li>@(Model.Checklist.AppRuns ? "?" : "?") App runs</li>
+                            <li>@(Model.Checklist.NoRuntimeErrors ? "?" : "?") No runtime errors</li>
+                        </ul>
+
+                        <h6>Code Quality</h6>
+                        <ul class="list-unstyled">
+                            <li>@(Model.Checklist.CodeIsClean ? "?" : "?") Clean code</li>
+                            <li>@(Model.Checklist.FollowsNamingConventions ? "?" : "?") Naming conventions</li>
+                            <li>@(Model.Checklist.HasErrorHandling ? "?" : "?") Error handling</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Documentation</h6>
+                        <ul class="list-unstyled">
+                            <li>@(Model.Checklist.HasReadme ? "?" : "?") README</li>
+                            <li>@(Model.Checklist.HasComments ? "?" : "?") Comments</li>
+                        </ul>
+
+                        <h6>Testing</h6>
+                        <ul class="list-unstyled">
+                            <li>@(Model.Checklist.HasTests ? "?" : "?") Has tests</li>
+                            <li>@(Model.Checklist.TestsPass ? "?" : "?") Tests pass</li>
+                        </ul>
+
+                        <h6>Repository</h6>
+                        <ul class="list-unstyled">
+                            <li>@(Model.Checklist.CommitsHaveMessages ? "?" : "?") Commit messages</li>
+                            <li>@(Model.Checklist.NoSensitiveData ? "?" : "?") No sensitive data</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

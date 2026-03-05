@@ -1,0 +1,67 @@
+﻿@model List<Review>
+@{
+    ViewData["Title"] = "Reviews";
+}
+<div class="text-center">
+    <h1>Reviews</h1>
+    <a asp-action="Review">Submit a Review</a> |
+    <a asp-action="Index">Back to Reviews Main Page</a>
+</div>
+@if (Model.Count == 0)
+{
+    <p class="text-center">No reviews yet.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Reviewer</th>
+                <th>Submission Link</th>
+                <th>Review Link</th>
+                <th>Date</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var review in Model)
+            {
+                <tr>
+                    <td>@review.Reviewer?.Name</td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(review.Submission?.CodeUrl))
+                        {
+                            var url = review.Submission.CodeUrl;
+                            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
+                            {
+                                url = "https://" + url;
+                            }
+                            <a href="@url" target="_blank">@review.Submission.CodeUrl</a>
+                        }
+                        else
+                        {
+                            <text>None</text>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(review.ReviewUrl))
+                        {
+                            var url = review.ReviewUrl;
+                            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
+                            {
+                                url = "https://" + url;
+                            }
+                            <a href="@url" target="_blank">@review.ReviewUrl</a>
+                        }
+                        else
+                        {
+                            <text>None</text>
+                        }
+                    </td>
+                    <td>@review.ReviewDate.ToString("g")</td>
+                    <td>@review.Comments</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
